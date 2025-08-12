@@ -115,16 +115,25 @@ Provide only the direct answer to what was asked.
         tool_results = []
         for content_block in initial_response.content:
             if content_block.type == "tool_use":
-                tool_result = tool_manager.execute_tool(
-                    content_block.name, 
-                    **content_block.input
-                )
-                
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": content_block.id,
-                    "content": tool_result
-                })
+                try:
+                    tool_result = tool_manager.execute_tool(
+                        content_block.name, 
+                        **content_block.input
+                    )
+                    
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": content_block.id,
+                        "content": tool_result
+                    })
+                except Exception as e:
+                    # Handle tool execution errors gracefully
+                    error_msg = f"Tool execution failed: {str(e)}"
+                    tool_results.append({
+                        "type": "tool_result", 
+                        "tool_use_id": content_block.id,
+                        "content": error_msg
+                    })
         
         # Add tool results as single message
         if tool_results:
@@ -137,6 +146,9 @@ Provide only the direct answer to what was asked.
             "system": base_params["system"]
         }
         
-        # Get final response
-        final_response = self.client.messages.create(**final_params)
-        return final_response.content[0].text
+        # Get final response with error handling
+        try:
+            final_response = self.client.messages.create(**final_params)
+            return final_response.content[0].text
+        except Exception as e:
+            return f"Error generating response: {str(e)}"

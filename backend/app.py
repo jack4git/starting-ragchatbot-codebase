@@ -62,6 +62,10 @@ class NewSessionResponse(BaseModel):
 async def query_documents(request: QueryRequest):
     """Process a query and return response with sources"""
     try:
+        # Validate input
+        if not request.query or not request.query.strip():
+            raise HTTPException(status_code=400, detail="Query cannot be empty")
+        
         # Create session if not provided
         session_id = request.session_id
         if not session_id:
@@ -70,13 +74,24 @@ async def query_documents(request: QueryRequest):
         # Process query using RAG system
         answer, sources = rag_system.query(request.query, session_id)
         
+        # Ensure answer is a string
+        if not isinstance(answer, str):
+            answer = str(answer)
+        
+        # Ensure sources is a list
+        if not isinstance(sources, list):
+            sources = []
+        
         return QueryResponse(
             answer=answer,
             sources=sources,
             session_id=session_id
         )
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Query processing error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Query processing failed: {str(e)}")
 
 @app.get("/api/courses", response_model=CourseStats)
 async def get_course_stats():

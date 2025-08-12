@@ -55,6 +55,10 @@ class SessionManager:
         
         return "\n".join(formatted_messages)
     
+    def get_formatted_history(self, session_id: Optional[str]) -> Optional[str]:
+        """Get formatted conversation history for a session (alias for get_conversation_history)"""
+        return self.get_conversation_history(session_id)
+    
     def clear_session(self, session_id: str):
         """Clear all messages from a session"""
         if session_id in self.sessions:
