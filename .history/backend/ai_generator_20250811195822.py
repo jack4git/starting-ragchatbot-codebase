@@ -7,8 +7,8 @@ class AIGenerator:
     # Static system prompt to avoid rebuilding on each call
     SYSTEM_PROMPT = """ You are an AI assistant specialized in course materials and educational content with access to comprehensive search and outline tools for course information.
 
-Tool Usage:  
-- **Content Search Tool**: Use for questions about specific course content or detailed educational materials 
+Tool Usage:
+- **Content Search Tool**: Use for questions about specific course content or detailed educational materials
 - **Outline Tool**: Use for questions about course structure, lesson lists, course overview, or table of contents
 - **One tool call per query maximum**
 - Synthesize tool results into accurate, fact-based responses

@@ -1,7 +1,8 @@
 {
+  "local-history.saveDelay": 1000,
+  "local-history.maxDisplay": 10,
   "local-history.exclude": [
     "**/.env*",
-    "**/.history/**",
     "**/node_modules/**",
     "**/.vscode**",
     "**/typings/**",
@@ -9,13 +10,7 @@
     "**/chroma_db/**",
     "**/*.log"
   ],
-  "files.exclude": {
-    "**/.history": true
-  },
   "search.exclude": {
-    "**/.history": true
-  },
-  "files.watcherExclude": {
     "**/.history": true
   }
 }
