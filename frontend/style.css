@@ -240,9 +240,79 @@ header h1 {
     margin-bottom: 0.25rem;
 }
 
+/* Redesigned sources content */
 .sources-content {
-    padding: 0 0.5rem 0.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(30, 41, 59, 0.7);
+    border-radius: 8px;
+    border: 1px solid rgba(51, 65, 85, 0.6);
+    margin-top: 4px;
+}
+
+/* Individual source link styling */
+.sources-content a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.1));
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 6px;
+    color: #e2e8f0;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Course and lesson text styling */
+.sources-content a::before {
+    content: "📚";
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* External link icon */
+.sources-content a::after {
+    content: "↗";
+    font-size: 0.8em;
+    padding: 2px;
+    background: rgba(37, 99, 235, 0.2);
+    border-radius: 3px;
+    opacity: 0.8;
+}
+
+/* Hover effects */
+.sources-content a:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(59, 130, 246, 0.2));
+    border-color: rgba(37, 99, 235, 0.4);
+    color: #f1f5f9;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.sources-content a:hover::after {
+    background: rgba(37, 99, 235, 0.4);
+    opacity: 1;
+}
+
+/* Active state */
+.sources-content a:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+}
+
+/* When no sources available */
+.sources-content:empty::before {
+    content: "No sources available";
     color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
 }
 
 /* Markdown formatting styles */
@@ -599,6 +669,35 @@ details[open] .suggested-header::before {
     color: var(--text-secondary);
     font-style: italic;
     text-transform: none;
+}
+
+/* New Chat Button */
+.new-chat-button {
+    width: 100%;
+    padding: 0.75rem 0;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.new-chat-button:focus {
+    outline: none;
+    color: var(--primary-color);
+}
+
+.new-chat-button:hover {
+    color: var(--primary-color);
+}
+
+.new-chat-button:active {
+    color: var(--primary-color);
 }
 
 /* Suggested Questions in Sidebar */
