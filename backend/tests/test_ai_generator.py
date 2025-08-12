@@ -56,7 +56,7 @@ class TestAIGenerator:
             mock_create.assert_called_once()
             
     def test_tool_calling_flow(self):
-        """Test the tool calling flow"""
+        """Test the single-round tool calling flow"""
         # Create mock tool manager
         mock_tool_manager = Mock(spec=ToolManager)
         mock_tool_manager.execute_tool.return_value = "Tool execution result"
@@ -72,7 +72,7 @@ class TestAIGenerator:
                 tool_calls=[tool_content]
             )
             
-            # Second call returns final response
+            # Second call returns final response (no tool use)
             final_response = MockAnthropicResponse("Final response after tool use")
             
             mock_create.side_effect = [initial_response, final_response]
@@ -89,6 +89,138 @@ class TestAIGenerator:
                 "search_course_content",
                 query="test query"
             )
+
+
+    def test_sequential_tool_calling(self):
+        """Test two-round sequential tool calling"""
+        # Create mock tool manager
+        mock_tool_manager = Mock(spec=ToolManager)
+        mock_tool_manager.execute_tool.side_effect = [
+            "Round 1 tool result", 
+            "Round 2 tool result"
+        ]
+        
+        # Create mock tools list
+        mock_tools = [{"name": "search_course_content", "description": "Search content"}]
+        
+        with patch.object(self.ai_generator.client.messages, 'create') as mock_create:
+            # Round 1: Tool use
+            tool_content_1 = MockToolUseContent(input_data={"query": "round 1 query"}, tool_id="tool_1")
+            round_1_response = MockAnthropicResponse(
+                stop_reason="tool_use",
+                tool_calls=[tool_content_1]
+            )
+            
+            # Round 2: Tool use  
+            tool_content_2 = MockToolUseContent(input_data={"query": "round 2 query"}, tool_id="tool_2")
+            round_2_response = MockAnthropicResponse(
+                stop_reason="tool_use", 
+                tool_calls=[tool_content_2]
+            )
+            
+            # Final response (no tools)
+            final_response = MockAnthropicResponse("Comprehensive response using both tool results")
+            
+            mock_create.side_effect = [round_1_response, round_2_response, final_response]
+            
+            result = self.ai_generator.generate_response(
+                "Complex query requiring multiple searches",
+                tools=mock_tools,
+                tool_manager=mock_tool_manager
+            )
+            
+            assert result == "Comprehensive response using both tool results"
+            assert mock_create.call_count == 3
+            assert mock_tool_manager.execute_tool.call_count == 2
+            
+            # Verify tool calls
+            tool_calls = mock_tool_manager.execute_tool.call_args_list
+            assert tool_calls[0] == (("search_course_content",), {"query": "round 1 query"})
+            assert tool_calls[1] == (("search_course_content",), {"query": "round 2 query"})
+
+    def test_early_termination_no_tools(self):
+        """Test termination when Claude doesn't use tools in first round"""
+        mock_tool_manager = Mock(spec=ToolManager)
+        mock_tools = [{"name": "search_course_content", "description": "Search content"}]
+        
+        with patch.object(self.ai_generator.client.messages, 'create') as mock_create:
+            # Direct response without tool use
+            direct_response = MockAnthropicResponse("Direct answer without tools")
+            mock_create.return_value = direct_response
+            
+            result = self.ai_generator.generate_response(
+                "What is 2+2?",
+                tools=mock_tools,
+                tool_manager=mock_tool_manager
+            )
+            
+            assert result == "Direct answer without tools"
+            assert mock_create.call_count == 1
+            assert mock_tool_manager.execute_tool.call_count == 0
+
+    def test_tool_execution_error_termination(self):
+        """Test termination when tool execution fails"""
+        # Create mock tool manager that throws errors
+        mock_tool_manager = Mock(spec=ToolManager)
+        mock_tool_manager.execute_tool.side_effect = Exception("Tool execution failed")
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search content"}]
+        
+        with patch.object(self.ai_generator.client.messages, 'create') as mock_create:
+            # Round 1: Tool use that will fail
+            tool_content = MockToolUseContent()
+            round_1_response = MockAnthropicResponse(
+                stop_reason="tool_use",
+                tool_calls=[tool_content]
+            )
+            
+            # Final response after error
+            final_response = MockAnthropicResponse("Response handling tool error")
+            
+            mock_create.side_effect = [round_1_response, final_response]
+            
+            result = self.ai_generator.generate_response(
+                "Search for content",
+                tools=mock_tools,
+                tool_manager=mock_tool_manager
+            )
+            
+            assert result == "Response handling tool error"
+            assert mock_create.call_count == 2
+            assert mock_tool_manager.execute_tool.call_count == 1
+
+    def test_max_rounds_limit(self):
+        """Test that system respects max_rounds limit"""
+        # Create mock tool manager
+        mock_tool_manager = Mock(spec=ToolManager)
+        mock_tool_manager.execute_tool.side_effect = [
+            "Round 1 result",
+            "Round 2 result"
+        ]
+        
+        mock_tools = [{"name": "search_course_content", "description": "Search content"}]
+        
+        with patch.object(self.ai_generator.client.messages, 'create') as mock_create:
+            # Both rounds return tool use
+            tool_content_1 = MockToolUseContent(tool_id="tool_1")
+            tool_content_2 = MockToolUseContent(tool_id="tool_2")
+            
+            round_1_response = MockAnthropicResponse(stop_reason="tool_use", tool_calls=[tool_content_1])
+            round_2_response = MockAnthropicResponse(stop_reason="tool_use", tool_calls=[tool_content_2])
+            final_response = MockAnthropicResponse("Final response after max rounds")
+            
+            mock_create.side_effect = [round_1_response, round_2_response, final_response]
+            
+            result = self.ai_generator.generate_response(
+                "Query that could continue indefinitely",
+                tools=mock_tools,
+                tool_manager=mock_tool_manager,
+                max_rounds=2
+            )
+            
+            assert result == "Final response after max rounds"
+            assert mock_create.call_count == 3  # 2 rounds + final call
+            assert mock_tool_manager.execute_tool.call_count == 2
 
 
 class TestAIGeneratorIntegration:
