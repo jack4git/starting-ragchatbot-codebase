@@ -94,3 +94,4 @@ Course documents in `docs/` folder are auto-loaded on startup. They must follow 
 - **Dual ChromaDB collections**: Separate storage for metadata vs. content
 - **Context-aware chunking**: Preserves sentence boundaries while adding lesson/course context
 - **Session-based conversations**: Maintains context across queries within a session
+- remember that I want .history tracked, and when I say add/commit/push that means everything -- but do ask if you see something that shouldn't be tracked
