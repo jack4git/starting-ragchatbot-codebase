@@ -1,0 +1,21 @@
+{
+  "local-history.exclude": [
+    "**/.env*",
+    "**/.history/**",
+    "**/node_modules/**",
+    "**/.vscode**",
+    "**/typings/**",
+    "**/out/**",
+    "**/chroma_db/**",
+    "**/*.log"
+  ],
+  "files.exclude": {
+    "**/.history": true
+  },
+  "search.exclude": {
+    "**/.history": true
+  },
+  "files.watcherExclude": {
+    "**/.history": true
+  }
+}
