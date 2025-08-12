@@ -1,15 +1,15 @@
 import os
 from dataclasses import dataclass
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file, prioritizing .env over system env
+env_vars = dotenv_values(".env")
 
 @dataclass
 class Config:
     """Configuration settings for the RAG system"""
     # Anthropic API settings
-    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+    ANTHROPIC_API_KEY: str = env_vars.get("ANTHROPIC_API_KEY", "")
     ANTHROPIC_MODEL: str = "claude-sonnet-4-20250514"
     
     # Embedding model settings
