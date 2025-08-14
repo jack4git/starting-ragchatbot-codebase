@@ -27,6 +27,21 @@ Access:
 - Web interface: http://localhost:8000
 - API docs: http://localhost:8000/docs
 
+### Code Quality
+```bash
+# Run all code quality checks (format, lint, type check)
+./scripts/quality.sh
+
+# Quick format only
+./scripts/format.sh
+
+# Individual tools
+uv run black .           # Format code
+uv run isort .           # Sort imports
+uv run flake8 .          # Lint code
+uv run mypy backend/     # Type check
+```
+
 ## Architecture Overview
 
 This is a **Retrieval-Augmented Generation (RAG) system** for querying course materials with AI-powered responses.
