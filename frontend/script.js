@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, newChatButton, themeToggle;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,8 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
     newChatButton = document.getElementById('newChatButton');
+    themeToggle = document.getElementById('themeToggle');
     
     setupEventListeners();
+    initializeThemeEnhanced();
+    setupThemeKeyboardShortcut();
     createNewSession();
     loadCourseStats();
 });
@@ -32,6 +35,15 @@ function setupEventListeners() {
     
     // New chat button
     newChatButton.addEventListener('click', startNewChat);
+    
+    // Theme toggle button
+    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleTheme();
+        }
+    });
     
     // Suggested questions
     document.querySelectorAll('.suggested-item').forEach(button => {
@@ -247,4 +259,133 @@ async function loadCourseStats() {
             courseTitles.innerHTML = '<span class="error">Failed to load courses</span>';
         }
     }
+}
+
+// Theme Functions
+function initializeTheme() {
+    // Check for saved theme preference or default to dark theme
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme) {
+        setTheme(savedTheme);
+    } else if (prefersDark) {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            setTheme(e.matches ? 'dark' : 'light');
+        }
+    });
+}
+
+function toggleTheme() {
+    const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Add transitioning class for enhanced visual feedback
+    document.body.classList.add('theme-transitioning');
+    
+    // Apply theme change
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Remove transitioning class after animation completes
+    setTimeout(() => {
+        document.body.classList.remove('theme-transitioning');
+    }, 300);
+}
+
+function setTheme(theme) {
+    // Validate theme parameter
+    if (theme !== 'light' && theme !== 'dark') {
+        console.warn('Invalid theme:', theme, '. Defaulting to dark theme.');
+        theme = 'dark';
+    }
+    
+    if (theme === 'light') {
+        document.body.classList.add('light-theme');
+        document.body.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', 'Switch to dark theme');
+            themeToggle.setAttribute('title', 'Switch to dark theme');
+        }
+        // Dispatch custom event for theme change
+        dispatchThemeChangeEvent('light');
+    } else {
+        document.body.classList.remove('light-theme');
+        document.body.setAttribute('data-theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (themeToggle) {
+            themeToggle.setAttribute('aria-label', 'Switch to light theme');
+            themeToggle.setAttribute('title', 'Switch to light theme');
+        }
+        // Dispatch custom event for theme change
+        dispatchThemeChangeEvent('dark');
+    }
+}
+
+// Helper function to dispatch theme change events
+function dispatchThemeChangeEvent(theme) {
+    const event = new CustomEvent('themeChange', {
+        detail: { theme: theme },
+        bubbles: true
+    });
+    document.dispatchEvent(event);
+}
+
+// Utility function to get current theme
+function getCurrentTheme() {
+    return document.body.classList.contains('light-theme') ? 'light' : 'dark';
+}
+
+// Utility function to check if system prefers dark mode
+function systemPrefersDarkMode() {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+// Enhanced theme initialization with better error handling
+function initializeThemeEnhanced() {
+    try {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = systemPrefersDarkMode();
+        
+        // Priority: saved preference > system preference > default (dark)
+        let themeToApply = 'dark'; // default
+        
+        if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+            themeToApply = savedTheme;
+        } else if (!savedTheme && !prefersDark) {
+            themeToApply = 'light';
+        }
+        
+        setTheme(themeToApply);
+        
+        // Listen for system theme changes only if no saved preference
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('theme')) {
+                setTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+        
+        console.log(`Theme initialized: ${themeToApply}`);
+    } catch (error) {
+        console.error('Error initializing theme:', error);
+        setTheme('dark'); // fallback to dark theme
+    }
+}
+
+// Add keyboard shortcut for theme toggle (Ctrl/Cmd + Shift + T)
+function setupThemeKeyboardShortcut() {
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+            e.preventDefault();
+            toggleTheme();
+        }
+    });
 }

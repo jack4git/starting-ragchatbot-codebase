@@ -5,7 +5,18 @@
     padding: 0;
 }
 
-/* CSS Variables */
+/* Smooth Theme Transitions for All Elements */
+*, *::before, *::after {
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CSS Variables - Dark Theme (Default)
+   Complete theming system using CSS custom properties for seamless theme switching.
+   All colors, shadows, and visual properties are defined as variables for consistency.
+*/
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
@@ -22,6 +33,67 @@
     --focus-ring: rgba(37, 99, 235, 0.2);
     --welcome-bg: #1e3a5f;
     --welcome-border: #2563eb;
+    
+    /* Additional dark theme colors for consistency */
+    --input-background: #1e293b;
+    --input-border: #334155;
+    --input-border-focus: #2563eb;
+    --sidebar-background: #1e293b;
+    --button-secondary: #64748b;
+    --button-secondary-hover: #94a3b8;
+    --error-background: rgba(239, 68, 68, 0.1);
+    --error-border: rgba(239, 68, 68, 0.2);
+    --error-text: #f87171;
+    --success-background: rgba(34, 197, 94, 0.1);
+    --success-border: rgba(34, 197, 94, 0.2);
+    --success-text: #4ade80;
+    --code-background: rgba(0, 0, 0, 0.2);
+    --blockquote-border: #334155;
+    --link-color: #60a5fa;
+    --link-hover-color: #93c5fd;
+    --heading-color: var(--text-primary);
+    --muted-text: var(--text-secondary);
+    --loading-dot-color: var(--text-secondary);
+}
+
+/* Light Theme Variables - Enhanced for Better Accessibility */
+body.light-theme,
+[data-theme="light"] {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --background: #ffffff;
+    --surface: #f8fafc;
+    --surface-hover: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #cbd5e1;
+    --user-message: #2563eb;
+    --assistant-message: #f1f5f9;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    --focus-ring: rgba(37, 99, 235, 0.3);
+    --welcome-bg: #eff6ff;
+    --welcome-border: #2563eb;
+    
+    /* Additional light theme specific colors */
+    --input-background: #ffffff;
+    --input-border: #d1d5db;
+    --input-border-focus: #2563eb;
+    --sidebar-background: #f9fafb;
+    --button-secondary: #6b7280;
+    --button-secondary-hover: #4b5563;
+    --error-background: rgba(239, 68, 68, 0.05);
+    --error-border: rgba(239, 68, 68, 0.2);
+    --error-text: #dc2626;
+    --success-background: rgba(34, 197, 94, 0.05);
+    --success-border: rgba(34, 197, 94, 0.2);
+    --success-text: #16a34a;
+    --code-background: rgba(0, 0, 0, 0.05);
+    --blockquote-border: #e5e7eb;
+    --link-color: #2563eb;
+    --link-hover-color: #1d4ed8;
+    --heading-color: var(--text-primary);
+    --muted-text: var(--text-secondary);
+    --loading-dot-color: var(--text-secondary);
 }
 
 /* Base Styles */
@@ -34,6 +106,9 @@ body {
     overflow: hidden;
     margin: 0;
     padding: 0;
+    /* Smooth theme transitions */
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Container - Full Screen */
@@ -46,18 +121,21 @@ body {
     padding: 0;
 }
 
-/* Header - Hidden */
+/* Header - Show with toggle button */
 header {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 header h1 {
     font-size: 1.75rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -78,7 +156,7 @@ header h1 {
 /* Left Sidebar */
 .sidebar {
     width: 320px;
-    background: var(--surface);
+    background: var(--sidebar-background, var(--surface));
     border-right: 1px solid var(--border-color);
     padding: 1.5rem;
     overflow-y: auto;
@@ -261,7 +339,7 @@ header h1 {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.1));
     border: 1px solid rgba(37, 99, 235, 0.2);
     border-radius: 6px;
-    color: #e2e8f0;
+    color: var(--text-primary);
     text-decoration: none;
     font-weight: 500;
     font-size: 0.85rem;
@@ -292,7 +370,7 @@ header h1 {
     transform: translateY(-1px);
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(59, 130, 246, 0.2));
     border-color: rgba(37, 99, 235, 0.4);
-    color: #f1f5f9;
+    color: var(--text-primary);
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
@@ -324,6 +402,7 @@ header h1 {
 .message-content h6 {
     margin: 0.5rem 0;
     font-weight: 600;
+    color: var(--heading-color);
 }
 
 .message-content h1 { font-size: 1.5rem; }
@@ -347,23 +426,25 @@ header h1 {
 }
 
 .message-content a {
-    color: #60a5fa;
+    color: var(--link-color);
     text-decoration: none;
     font-weight: 500;
-    border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+    border-bottom: 1px solid var(--link-color);
+    opacity: 0.8;
     transition: all 0.2s ease;
     padding: 0 2px;
     border-radius: 3px;
 }
 
 .message-content a:hover {
-    color: #93c5fd;
-    background-color: rgba(96, 165, 250, 0.1);
-    border-bottom-color: rgba(147, 197, 253, 0.5);
+    color: var(--link-hover-color);
+    background-color: var(--link-color);
+    opacity: 0.1;
+    border-bottom-color: var(--link-hover-color);
 }
 
 .message-content code {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--code-background);
     padding: 0.125rem 0.25rem;
     border-radius: 3px;
     font-family: 'Fira Code', 'Consolas', monospace;
@@ -371,7 +452,7 @@ header h1 {
 }
 
 .message-content pre {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--code-background);
     padding: 0.75rem;
     border-radius: 4px;
     overflow-x: auto;
@@ -384,7 +465,7 @@ header h1 {
 }
 
 .message-content blockquote {
-    border-left: 3px solid var(--primary);
+    border-left: 3px solid var(--blockquote-border, var(--primary-color));
     padding-left: 1rem;
     margin: 0.5rem 0;
     color: var(--text-secondary);
@@ -426,8 +507,8 @@ header h1 {
 #chatInput {
     flex: 1;
     padding: 0.875rem 1.25rem;
-    background: var(--surface);
-    border: 1px solid var(--border-color);
+    background: var(--input-background, var(--surface));
+    border: 1px solid var(--input-border, var(--border-color));
     border-radius: 24px;
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -436,7 +517,7 @@ header h1 {
 
 #chatInput:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--input-border-focus, var(--primary-color));
     box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
@@ -489,7 +570,7 @@ header h1 {
 .loading span {
     width: 8px;
     height: 8px;
-    background: var(--text-secondary);
+    background: var(--loading-dot-color);
     border-radius: 50%;
     animation: bounce 1.4s infinite ease-in-out both;
 }
@@ -513,21 +594,21 @@ header h1 {
 
 /* Error Message */
 .error-message {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
+    background: var(--error-background);
+    color: var(--error-text);
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--error-border);
     margin: 0.5rem 0;
 }
 
 /* Success Message */
 .success-message {
-    background: rgba(34, 197, 94, 0.1);
-    color: #4ade80;
+    background: var(--success-background);
+    color: var(--success-text);
     padding: 0.75rem 1.25rem;
     border-radius: 8px;
-    border: 1px solid rgba(34, 197, 94, 0.2);
+    border: 1px solid var(--success-border);
     margin: 0.5rem 0;
 }
 
@@ -682,7 +763,7 @@ details[open] .suggested-header::before {
 
 .no-courses, .loading, .error {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: var(--muted-text);
     font-style: italic;
     text-transform: none;
 }
@@ -749,6 +830,95 @@ details[open] .suggested-header::before {
     transform: translateX(2px);
 }
 
+/* Theme Toggle Button */
+.theme-toggle {
+    position: relative;
+    background: var(--background);
+    border: 2px solid var(--border-color);
+    border-radius: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.theme-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    border-color: var(--primary-color);
+}
+
+.theme-toggle:hover {
+    background: var(--surface-hover);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.theme-toggle:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+}
+
+/* Theme Icons */
+.theme-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sun-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+.moon-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(180deg) scale(0.8);
+}
+
+/* Light theme icon states */
+body.light-theme .sun-icon,
+[data-theme="light"] .sun-icon {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(-180deg) scale(0.8);
+}
+
+body.light-theme .moon-icon,
+[data-theme="light"] .moon-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+}
+
+/* Hover effects on icons */
+.theme-toggle:hover .theme-icon {
+    color: var(--primary-color);
+}
+
+/* Header title area */
+.header-content {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Theme Transition States */
+body.theme-transitioning,
+[data-theme] body.theme-transitioning {
+    pointer-events: none; /* Prevent interactions during transition */
+}
+
+body.theme-transitioning *,
+[data-theme] body.theme-transitioning * {
+    transition-duration: 0.3s !important; /* Ensure consistent timing */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content {
@@ -786,11 +956,18 @@ details[open] .suggested-header::before {
     }
     
     header {
-        padding: 1rem;
+        padding: 1rem 1.5rem;
+        flex-direction: row;
+        justify-content: space-between;
     }
     
     header h1 {
         font-size: 1.5rem;
+    }
+    
+    .theme-toggle {
+        width: 42px;
+        height: 42px;
     }
     
     .chat-messages {
