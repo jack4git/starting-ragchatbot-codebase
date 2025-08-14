@@ -15,7 +15,8 @@
       "WebFetch(domain:github.com)",
       "Bash(mkdir:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": []
   }
