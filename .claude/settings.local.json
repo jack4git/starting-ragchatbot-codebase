@@ -16,7 +16,10 @@
       "Bash(mkdir:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git worktree:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
